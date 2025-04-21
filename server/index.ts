@@ -15,6 +15,7 @@ app.get('/', (req, res) => {
 });
 
 app.use('/api/internships', internshipRoutes);
+app.use('/api/stats', statsRoutes);
 
 app.listen(port, () => {
   console.log(`Server is running at http://localhost:${port}`);
