@@ -1,9 +1,12 @@
 import express from "express";
 import { internships, Internship } from "../models/internship";
+import { PrismaClient } from "@prisma/client";
 
 const router = express.Router();
+const prisma = new PrismaClient();
 
-router.post('/', (req: express.Request, res: express.Response) => {
+//add to db
+router.post('/', async (req: express.Request, res: express.Response) => {
   const newInternship: Internship = req.body;
   const { company, position, pay, major, gpa, experience } = newInternship;
 
@@ -18,27 +21,28 @@ router.post('/', (req: express.Request, res: express.Response) => {
     return;
   }
 
-  internships.push(newInternship);
+  await prisma.internship.create({
+    data: { company, position, pay, major, gpa, experience }
+  });
   res.status(201).json({ message: "Internship submitted!" });
 });
 
-router.get('/', (req, res) => {
+//retrieve from db
+router.get('/', async (req, res) => {
   const { major, company, gpa } = req.query;
-  let filtered = internships;
+  let filters: any = {};
 
-  if (major) {
-    filtered = filtered.filter(i => i.major.toLowerCase() === (major as string).toLowerCase());
-  }
 
-  if (company) {
-    filtered = filtered.filter(i => i.company.toLowerCase() === (company as string).toLowerCase());
-  }
 
-  if (gpa) {
-    filtered = filtered.filter(i => i.gpa === Number(gpa));
-  }
+  if (major) filters.major = { equals: major as string, mode: 'insensitive'};
+  if (company) filters.company = { equals: company as string, mode: 'insensitive'};
+  if (gpa) filters.gpa = Number(gpa);
 
-  res.json(filtered);
+  const results = await prisma.internship.findMany({
+    where: filters
+  });
+
+  res.json(results);
 });
 
 export default router;
