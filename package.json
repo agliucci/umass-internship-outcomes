@@ -1,13 +1,14 @@
 {
   "dependencies": {
+    "@prisma/client": "^6.6.0",
     "express": "^5.1.0"
   },
   "devDependencies": {
     "@types/cors": "^2.8.17",
-    "@types/express": "^5.0.1"
+    "@types/express": "^5.0.1",
+    "prisma": "^6.6.0"
   },
   "scripts": {
-  "dev": "ts-node-dev index.ts"
-}
-
+    "dev": "ts-node-dev index.ts"
+  }
 }
